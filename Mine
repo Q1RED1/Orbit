@@ -1,35 +1,40 @@
-_G.Enable = true 
-_G.Speed = "0"
-_G.range = "2"
+-- Define initial parameters
+local target = {x = 0, y = 0, z = 0}  -- Target position
+local orbit_radius = 15               -- Radius of the orbit
+local orbit_speed = 3                 -- Speed of orbiting (radians per second)
+local hover_height = 5                -- Height above the target
+local time = 0                        -- Elapsed time
 
+-- Function to update the position of the entity
+function update_position(delta_time)
+    -- Increment time
+    time = time + delta_time * orbit_speed
+    
+    -- Calculate new position
+    local new_x = target.x + orbit_radius * math.cos(time)
+    local new_z = target.z + orbit_radius * math.sin(time)
+    local new_y = target.y + hover_height
+    
+    -- Update the entity's position
+    set_entity_position(new_x, new_y, new_z)
+end
 
-local players = game:GetService("Players")
-while _G.Enable do
-    local closestPlayer = nil
-    local shortestDistance = math.huge
+-- Placeholder function to set the entity's position
+-- Replace this with the actual function from your game/simulation engine
+function set_entity_position(x, y, z)
+    -- Example: print the new position to the console (for debugging purposes)
+    print(string.format("Entity position: x=%.2f, y=%.2f, z=%.2f", x, y, z))
+    
+    -- In a real game/simulation, this would move the entity
+    -- Example: entity.setPosition(x, y, z)  -- Replace with actual API call
+end
 
-    for i, player in ipairs(players:GetPlayers()) do
-        if player ~= players.LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-            local distance =
-                (player.Character.HumanoidRootPart.Position - players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
-            if distance < shortestDistance then
-                closestPlayer = player
-                shortestDistance = distance
-            end
-        end
-    end
-
-    if closestPlayer then
-        local rootCFrame = players.LocalPlayer.Character.HumanoidRootPart.CFrame
-        local targetCFrame = closestPlayer.Character.HumanoidRootPart.CFrame
-        for i = 1, 360 do
-            local angle = math.rad(i)
-            local x = math.sin(angle) * _G.range
-            local z = math.cos(angle) * _G.range
-            local offset = Vector3.new(x, 0, z)
-            local newCFrame = targetCFrame + offset
-            players.LocalPlayer.Character.HumanoidRootPart.CFrame = newCFrame
-            task.wait(_G.Speed)
-        end
-    end
+-- Main loop (replace with your game's update loop)
+while true do
+    local delta_time = 0.016  -- Assuming 60 FPS, so each frame is ~0.016 seconds
+    update_position(delta_time)
+    
+    -- Wait for the next frame (placeholder)
+    -- Replace this with the actual wait mechanism in your game/simulation engine
+    os.execute("sleep " .. tonumber(0.016))
 end
